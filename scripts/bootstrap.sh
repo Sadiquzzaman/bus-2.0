@@ -40,9 +40,16 @@ deps=(
   github.com/twmb/franz-go/pkg/kadm
 )
 
-if ! grep -q "^require" go.mod; then
+# Checked by a direct dependency, not any "require" line: running
+# `make new-service` before bootstrap can leave a partial one behind.
+if ! grep -q "github.com/gin-gonic/gin v" go.mod; then
   echo "==> resolving dependencies (latest versions)"
   go get "${deps[@]/%/@latest}"
+  # ent's generator is tracked as a go tool so `go mod tidy` keeps its
+  # dependencies. It needs a golang.org/x/tools new enough to read the
+  # running Go version's export data, so pin that to latest too.
+  go get -tool entgo.io/ent/cmd/ent@latest
+  go get golang.org/x/tools@latest
 fi
 
 echo "==> ent codegen"
