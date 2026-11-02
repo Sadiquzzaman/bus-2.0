@@ -43,7 +43,7 @@ new-service:
 gen:
 	go generate ./services/...
 
-## run: run a service locally — make run svc=example-pg mode=all|api|relay|consumer|topics
+## run: run a service locally — make run svc=iam mode=all|api|relay|consumer|topics
 run: _need-svc
 	cd services/$(svc) && go run ./cmd/$(svc) $(mode)
 
@@ -69,20 +69,20 @@ fmt:
 	gofmt -s -w platform services tools
 	@command -v goimports >/dev/null && goimports -local github.com/Sadiquzzaman/bus-2.0-go-boilerplate -w platform services tools || true
 
-## db: create the local postgres database for a service — make db svc=example-pg
+## db: create the local postgres database for a service — make db svc=iam
 db: _need-svc
 	$(COMPOSE) exec -T postgres sh -c 'psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '\''$(subst -,_,$(svc))'\''" | grep -q 1 || createdb -U postgres $(subst -,_,$(svc))'
 
-## migrate-diff: generate a migration from the ent schema — make migrate-diff svc=example-pg name=add_x
+## migrate-diff: generate a migration from the ent schema — make migrate-diff svc=iam name=add_x
 migrate-diff: _need-svc
 	@test -n "$(name)" || (echo "name= is required" && exit 1)
 	cd services/$(svc) && atlas migrate diff $(name) --env local
 
-## migrate-up: apply migrations to the local DB — make migrate-up svc=example-pg
+## migrate-up: apply migrations to the local DB — make migrate-up svc=iam
 migrate-up: _need-svc
 	cd services/$(svc) && set -a && source .env && set +a && atlas migrate apply --env local
 
-## migrate-status: show migration status — make migrate-status svc=example-pg
+## migrate-status: show migration status — make migrate-status svc=iam
 migrate-status: _need-svc
 	cd services/$(svc) && set -a && source .env && set +a && atlas migrate status --env local
 

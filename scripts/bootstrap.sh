@@ -78,4 +78,4 @@ else
 fi
 
 echo
-echo "Done. Next: make up && make run svc=example-pg mode=all"
+echo "Done. Next: make up && make run svc=iam mode=all"
